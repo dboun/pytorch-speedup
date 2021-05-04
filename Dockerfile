@@ -22,7 +22,7 @@ RUN cd gcc-7.2.0 && ./contrib/download_prerequisites && \
     mkdir gcc-build-7.2.0 && cd gcc-build-7.2.0 && \
     ../configure -enable-checking=release -enable-languages=c,c++ -disable-multilib && \
     yum groupinstall "Development Tools" && \
-    make && make install
+    make -j 12 && make install
 
 ### ---- Install binutils/2.34 ----
 
@@ -42,4 +42,4 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install conda-build -y
 RUN mkdir -p /opt/repo
 WORKDIR /opt/repo
 COPY . .
-RUN $SHELL_WITH_DEVTOOLSET7 && $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c anaconda
+RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c anaconda
