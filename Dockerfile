@@ -26,9 +26,18 @@ RUN cd gcc-7.2.0 && ./contrib/download_prerequisites && \
 
 ### ---- Install binutils/2.34 ----
 
-RUN yum install -y https://rpmfind.net/linux/fedora/linux/releases/32/Everything/x86_64/os/Packages/b/binutils-2.34-2.fc32.x86_64.rpm
+#RUN yum install -y https://rpmfind.net/linux/fedora/linux/releases/32/Everything/x86_64/os/Packages/b/binutils-2.34-2.fc32.x86_64.rpm
+#RUN yum install binutils -y
 
-### ---- Package ----
+### ---- Install which (for some reason) ----
+
+RUN yum install which -y
+
+
+# ---- Package ----
+
+### Needed for pytorch
+RUN mv /usr/local/bin/c++ /usr/local/bin/c-- && ln -s g++ c++
 
 ### PyTorch dependencies
 RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install conda-build -y
