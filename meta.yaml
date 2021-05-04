@@ -1,0 +1,42 @@
+package:
+  name: pytorch-speedup
+  version: 0.1
+
+source:
+  path: .
+  #git_rev:
+  #git_url:
+
+requirements:
+  build:
+    - python
+    - pip
+    - setuptools
+    - cudnn
+    - numpy 
+    - ninja 
+    - pyyaml 
+    - mkl 
+    - mkl-include 
+    - setuptools
+    - cmake 
+    - cffi 
+    - typing_extensions 
+    - future 
+    - six 
+    - requests 
+    - dataclasses 
+    - ipython 
+    - pkg-config
+#    - pytorch
+    - cudnn
+
+  run:
+    - python
+
+test:
+  imports:
+    -
+
+about:
+  home:
