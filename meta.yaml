@@ -12,7 +12,7 @@ requirements:
     - python
     - pip
     - setuptools
-    - cudnn
+    - cudnn 7.6.5 cuda10.2_0
     - numpy 
     - ninja 
     - pyyaml 
@@ -28,15 +28,22 @@ requirements:
     - dataclasses 
     - ipython 
     - pkg-config
-#    - pytorch
-    - cudnn
+    - magma-cuda102
 
   run:
     - python
+    - pip
+    - cudnn 7.6.5 cuda10.2_0
+    - magma-cuda102
+    - mkl
+    - cffi
+    - ninja
+    - numpy
 
 test:
   imports:
-    -
+    - torch
+    - torchvision
 
 about:
   home:
