@@ -5,9 +5,9 @@
 # export CUDA_HOME=/root/anaconda3/pkgs/cudatoolkit-10.2.89-hfd86e86_1
 
 ### Dummy file
-mkdir -p $PREFIX/bin
-echo 'print("hi!")' > ex1234.py
-cp ex1234.py $PREFIX/bin/ex1234.py
+# mkdir -p $PREFIX/bin
+# echo 'print("hi!")' > ex1234.py
+# cp ex1234.py $PREFIX/bin/ex1234.py
 
 echo ">>>>>Building..." && \
     cd /repo/src/pytorch && \
