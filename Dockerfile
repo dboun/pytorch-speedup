@@ -98,7 +98,7 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install \
 COPY . .
 # RUN touch __init__.py
 
-RUN apt-get install build-essential -y
+RUN apt-get install build-essential wget -y
 
 # Build package
 # RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
