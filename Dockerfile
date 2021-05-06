@@ -12,14 +12,16 @@ ENV ACTIVATE_CONDA ". /root/anaconda3/etc/profile.d/conda.sh"
 RUN $ACTIVATE_CONDA && conda update conda
 # For easier testing (ignore this)
 RUN $CONDA create --name testenv python=3.7 -y
-# env
+# Env
 RUN $CONDA create --name buildenv python=3.7 -y
 ENV CONDA_ENV_DIR /root/anaconda3/envs/buildenv
 ENV ACTIVATE_CONDA_ENV "conda activate $CONDA_ENV_DIR"
+# For interactive shell
+RUN echo "${ACTIVATE_CONDA} && ${ACTIVATE_CONDA_ENV}" >> ~/.bashrc
 
-### ---- Install gcc & binutils & git ----
+### ---- Install gcc & binutils & git (gcc-7 might not be used) ----
 
-RUN apt-get install git gcc-7 binutils-dev -y
+RUN apt-get install git gcc-7 binutils-dev build-essential -y
 
 ### ---- Clone repos ----
 
@@ -42,12 +44,6 @@ RUN cd /repo/src && \
     git checkout ${PYTORCH_VERSION}  && \
     git submodule sync  && \
     git submodule update --init --recursive
-
-# Clone torchvision
-RUN cd /repo/src && \
-    git clone https://github.com/pytorch/vision.git && \
-    cd vision && \
-    git checkout ${PYTORCHVISION_VERSION}
 
 # ---- Package ----
 
@@ -78,7 +74,6 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install \
     pkg-config \
     magma-cuda102 \
     -c pytorch -y
-    # -c anaconda
 
 ENV CUDA_HOME="/root/anaconda3/pkgs/cudatoolkit-10.2.89-hfd86e86_1"
 ENV PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/bin:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:${PATH}"
@@ -94,27 +89,15 @@ ENV CUDNN_INCLUDE_DIR /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/include
 ENV LD_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib:$LD_LIBRARY_PATH
 
 COPY . .
-# RUN touch __init__.py
-
-RUN apt-get install build-essential -y
-
-# For "fun" issue https://stackoverflow.com/questions/51408698/when-in-conda-tmux-and-emacs-throw-error-while-loading-shared-libraries-libti
-RUN apt-get install libncurses6 libtinfo-dev
 
 # Build package
-# RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
-#-c anaconda 
-
+RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
 
 # Copy results
 RUN mkdir -p /root/anaconda3/envs/buildenv/conda-bld
 RUN mkdir -p /output
 RUN yes | /bin/cp -r /root/anaconda3/envs/buildenv/conda-bld /output
 
-### For interactive shell
-RUN echo "${ACTIVATE_CONDA} && ${ACTIVATE_CONDA_ENV}" >> ~/.bashrc
-
 ### For reference
-#conda install --use-local --update-deps my-package-name -c anaconda
 #conda install pytorch-speedup-0.1-py37_0.tar.bz2
 #conda update pytorch-speedup # -> install deps
