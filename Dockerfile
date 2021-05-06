@@ -16,6 +16,8 @@ RUN $CONDA create --name testenv python=3.7 -y
 RUN $CONDA create --name buildenv python=3.7 -y
 ENV CONDA_ENV_DIR /root/anaconda3/envs/buildenv
 ENV ACTIVATE_CONDA_ENV "conda activate $CONDA_ENV_DIR"
+### interactive shell
+RUN echo "${ACTIVATE_CONDA} && ${ACTIVATE_CONDA_ENV}" >> ~/.bashrc
 
 ### ---- Install gcc & binutils & git ----
 
@@ -43,11 +45,11 @@ RUN cd /repo/src && \
     git submodule sync  && \
     git submodule update --init --recursive
 
-# Clone torchvision
-RUN cd /repo/src && \
-    git clone https://github.com/pytorch/vision.git && \
-    cd vision && \
-    git checkout ${PYTORCHVISION_VERSION}
+# # Clone torchvision
+# RUN cd /repo/src && \
+#     git clone https://github.com/pytorch/vision.git && \
+#     cd vision && \
+#     git checkout ${PYTORCHVISION_VERSION}
 
 # ---- Package ----
 
@@ -60,7 +62,7 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install \
     python \
     pip \
     setuptools \
-    cudnn=7.6.5=cuda10.2_0 \
+    # cudnn=7.6.5=cuda10.2_0 \
     numpy \ 
     ninja \ 
     pyyaml \ 
@@ -76,43 +78,36 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install \
     dataclasses \ 
     ipython \ 
     pkg-config \
-    magma-cuda102 \
+    magma-cuda113 \
     -c pytorch -y
     # -c anaconda
 
-ENV CUDA_HOME="/root/anaconda3/pkgs/cudatoolkit-10.2.89-hfd86e86_1"
-ENV PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/bin:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:${PATH}"
-ENV LD_LIBRARY_PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$LD_LIBRARY_PATH"
-ENV LIBRARY_PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$LIBRARY_PATH"
-ENV CPATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$CPATH"
-ENV PATH="${CUDA_HOME}/bin:$PATH"
-ENV LD_LIBRARY_PATH="${CUDA_HOME}/lib:$LD_LIBRARY_PATH"
-# env cudnn
-ENV CUDNN_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib
-ENV CUDNN_LIBRARY /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib
-ENV CUDNN_INCLUDE_DIR /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/include
-ENV LD_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib:$LD_LIBRARY_PATH
+# ENV CUDA_HOME="/root/anaconda3/pkgs/cudatoolkit-10.2.89-hfd86e86_1"
+# ENV PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/bin:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:${PATH}"
+# ENV LD_LIBRARY_PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$LD_LIBRARY_PATH"
+# ENV LIBRARY_PATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$LIBRARY_PATH"
+# ENV CPATH="${CUDA_HOME}/lib:/root/anaconda3/envs/buildenv/lib:/usr/local/lib:$CPATH"
+# ENV PATH="${CUDA_HOME}/bin:$PATH"
+# ENV LD_LIBRARY_PATH="${CUDA_HOME}/lib:$LD_LIBRARY_PATH"
+# # env cudnn
+# ENV CUDNN_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib
+# ENV CUDNN_LIBRARY /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib
+# ENV CUDNN_INCLUDE_DIR /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/include
+# ENV LD_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib:$LD_LIBRARY_PATH
 
 COPY . .
 # RUN touch __init__.py
 
 RUN apt-get install build-essential -y
 
-# For "fun" issue https://stackoverflow.com/questions/51408698/when-in-conda-tmux-and-emacs-throw-error-while-loading-shared-libraries-libti
-RUN apt-get install libncurses6 libtinfo-dev
-
 # Build package
 # RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
 #-c anaconda 
-
 
 # Copy results
 RUN mkdir -p /root/anaconda3/envs/buildenv/conda-bld
 RUN mkdir -p /output
 RUN yes | /bin/cp -r /root/anaconda3/envs/buildenv/conda-bld /output
-
-### For interactive shell
-RUN echo "${ACTIVATE_CONDA} && ${ACTIVATE_CONDA_ENV}" >> ~/.bashrc
 
 ### For reference
 #conda install --use-local --update-deps my-package-name -c anaconda
