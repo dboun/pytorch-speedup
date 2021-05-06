@@ -39,6 +39,7 @@ requirements:
     - cffi
     - ninja
     - numpy
+    - typing_extensions
 
 test:
   imports:

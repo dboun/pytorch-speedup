@@ -99,7 +99,7 @@ RUN touch __init__.py
 RUN apt-get install build-essential -y
 
 # Build package
-RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch 
+# RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
 #-c anaconda 
 
 
