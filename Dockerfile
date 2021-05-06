@@ -11,9 +11,9 @@ ENV CONDA /root/anaconda3/bin/conda
 ENV ACTIVATE_CONDA ". /root/anaconda3/etc/profile.d/conda.sh"
 RUN $ACTIVATE_CONDA && conda update conda
 # For easier testing (ignore this)
-RUN $CONDA create --name testenv python=3.7 -y
+RUN $CONDA create --name testenv python=3.6 -y
 # env
-RUN $CONDA create --name buildenv python=3.7 -y
+RUN $CONDA create --name buildenv python=3.6 -y
 ENV CONDA_ENV_DIR /root/anaconda3/envs/buildenv
 ENV ACTIVATE_CONDA_ENV "conda activate $CONDA_ENV_DIR"
 ### interactive shell
