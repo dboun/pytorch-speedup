@@ -96,7 +96,7 @@ RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda install \
 # ENV LD_LIBRARY_PATH /root/anaconda3/pkgs/cudnn-7.6.5-cuda10.2_0/lib:$LD_LIBRARY_PATH
 
 RUN apt-get install build-essential wget -y
-RUN apt-get install libxml2-dev -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata libxml2-dev
 
 COPY . .
 # RUN touch __init__.py
