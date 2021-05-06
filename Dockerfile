@@ -99,7 +99,7 @@ RUN touch __init__.py
 RUN apt-get install build-essential -y
 
 # For "fun" issue https://stackoverflow.com/questions/51408698/when-in-conda-tmux-and-emacs-throw-error-while-loading-shared-libraries-libti
-RUN apt-get install libncurses6 
+RUN apt-get install libncurses6 libtinfo-dev
 
 # Build package
 # RUN $ACTIVATE_CONDA && $ACTIVATE_CONDA_ENV && conda-build . -c pytorch -c conda-forge
