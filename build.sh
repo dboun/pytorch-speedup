@@ -18,6 +18,8 @@ export CUDA_HOME=$PREFIX/usr/local/cuda
 mkdir tmp_cudnn && cd tmp_cudnn
 wget -q https://developer.download.nvidia.com/compute/redist/cudnn/v8.2.0/cudnn-11.3-linux-x64-v8.2.0.53.tgz -O cudnn-8.2.tgz
 tar xf cudnn-8.2.tgz
+mkdir -p $PREFIX/usr/local/cuda/include
+mkdir -p $PREFIX/usr/local/cuda/lib64
 cp -a cuda/include/* $PREFIX/usr/local/cuda/include/
 cp -a cuda/lib64/* $PREFIX/usr/local/cuda/lib64/
 cd ..
